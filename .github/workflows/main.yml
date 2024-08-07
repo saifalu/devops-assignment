@@ -7,7 +7,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest  # Use a GitHub-hosted runner with Ubuntu
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
@@ -29,5 +29,6 @@ jobs:
           docker pull ${{ secrets.DOCKER_USERNAME }}/backend:latest
           docker-compose up -d
         EOF
+
 
 
