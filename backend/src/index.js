@@ -1,38 +1,26 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const dotenv = require('dotenv');
-
-dotenv.config({ path: '../.env' });
-
 const app = express();
+
+// Middleware
 app.use(express.json());
 
-mongoose.connect(process.env.DB_URI, {
+// Connect to MongoDB
+const mongoUri = process.env.MONGO_URI || 'mongodb://localhost:27017/tododb';
+mongoose.connect(mongoUri, {
   useNewUrlParser: true,
-  useUnifiedTopology: true
+  useUnifiedTopology: true,
+})
+.then(() => console.log('MongoDB connected'))
+.catch((err) => console.log(err));
+
+// Routes
+app.get('/', (req, res) => {
+  res.send('Hello from backend');
 });
 
-const todoSchema = new mongoose.Schema({
-  text: String,
-  completed: Boolean
-});
-
-const Todo = mongoose.model('Todo', todoSchema);
-
-app.get('/todos', async (req, res) => {
-  const todos = await Todo.find();
-  res.json(todos);
-});
-
-app.post('/todos', async (req, res) => {
-  const todo = new Todo({
-    text: req.body.text,
-    completed: false
-  });
-  await todo.save();
-  res.json(todo);
-});
-
-app.listen(5000, () => {
-  console.log('Server running on port 5000');
+// Start server
+const port = process.env.PORT || 5000;
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
 });
