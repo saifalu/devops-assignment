@@ -27,22 +27,6 @@ jobs:
           docker buildx build --platform linux/amd64 --push -t ${{ secrets.DOCKER_USERNAME }}/frontend:latest ./frontend
           docker buildx build --platform linux/amd64 --push -t ${{ secrets.DOCKER_USERNAME }}/backend:latest ./backend
       
-      - name: Debug SSH key
-        run: |
-         echo "${{ secrets.EC2_KEY }}" > key.pem
-         chmod 600 key.pem
-         ls -l key.pem
-         cat key.pem
-
-      - name: Check connectivity
-        run: |
-         curl -v ec2-43-205-145-82.ap-south-1.compute.amazonaws.com
-
-      - name: Set up SSH agent
-        uses: webfactory/ssh-agent@v0.5.3
-        with:
-         ssh-private-key: ${{ secrets.EC2_KEY }}
-
       - name: Deploy to EC2
         uses: appleboy/ssh-action@v0.1.2
         with:
