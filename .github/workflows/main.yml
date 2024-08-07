@@ -36,7 +36,7 @@ jobs:
 
       - name: Check connectivity
         run: |
-        curl -v ec2-43-205-145-82.ap-south-1.compute.amazonaws.com
+         curl -v ec2-43-205-145-82.ap-south-1.compute.amazonaws.com
 
       - name: Set up SSH agent
         uses: webfactory/ssh-agent@v0.5.3
