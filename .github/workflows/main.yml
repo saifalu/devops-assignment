@@ -36,9 +36,5 @@ jobs:
 
       - name: Deploy to EC2
         run: |
-          aws ssm send-command \
-            --document-name "AWS-RunShellScript" \
-            --targets "Key=instanceids,Values=${{ secrets.EC2_INSTANCE_ID }}" \
-            --parameters 'commands=cd /path/to/your/compose/file && docker pull ${{ secrets.DOCKER_USERNAME }}/frontend:latest && docker pull ${{ secrets.DOCKER_USERNAME }}/backend:latest && docker-compose down && docker-compose up -d --build && docker ps -a'
-
+         aws ssm send-command --document-name "AWS-RunShellScript" --targets "Key=instanceids,Values=${{ secrets.EC2_INSTANCE_ID }}" --parameters 'commands=cd /home/ec2-user && docker pull ${{ secrets.DOCKER_USERNAME }}/frontend:latest && docker pull ${{ secrets.DOCKER_USERNAME }}/backend:latest && docker-compose up -d --build'
 
