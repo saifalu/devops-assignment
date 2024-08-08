@@ -26,15 +26,12 @@ jobs:
         run: |
           docker buildx build --platform linux/amd64 --push -t ${{ secrets.DOCKER_USERNAME }}/frontend:latest ./frontend
           docker buildx build --platform linux/amd64 --push -t ${{ secrets.DOCKER_USERNAME }}/backend:latest ./backend
-      
+
       - name: Deploy to EC2
-        uses: appleboy/ssh-action@v0.1.2
+        uses: aws-actions/amazon-ec2-run-command@v1
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_KEY }}
-          port: ${{ secrets.EC2_PORT }}
-          script: |
-            docker pull ${{ secrets.DOCKER_USERNAME }}/frontend:latest
-            docker pull ${{ secrets.DOCKER_USERNAME }}/backend:latest
-            docker-compose up -d
+          instance-id: ${{ secrets.EC2_INSTANCE_ID }}
+          document-name: "AWS-RunShellScript"
+          parameters: |
+            commands=docker pull ${{ secrets.DOCKER_USERNAME }}/frontend:latest && docker pull ${{ secrets.DOCKER_USERNAME }}/backend:latest && docker-compose up -d
+
