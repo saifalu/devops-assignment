@@ -27,11 +27,15 @@ jobs:
           docker buildx build --platform linux/amd64 --push -t ${{ secrets.DOCKER_USERNAME }}/frontend:latest ./frontend
           docker buildx build --platform linux/amd64 --push -t ${{ secrets.DOCKER_USERNAME }}/backend:latest ./backend
 
-      - name: Deploy to EC2
-        uses: aws-actions/amazon-ec2-run-command@v1
+      - name: Configure AWS CLI
+        uses: aws-actions/configure-aws-credentials@v1
         with:
-          instance-id: ${{ secrets.EC2_INSTANCE_ID }}
-          document-name: "AWS-RunShellScript"
-          parameters: |
-            commands=docker pull ${{ secrets.DOCKER_USERNAME }}/frontend:latest && docker pull ${{ secrets.DOCKER_USERNAME }}/backend:latest && docker-compose up -d
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Deploy to EC2
+        run: |
+          aws ssm send-command --document-name "AWS-RunShellScript" --targets "Key=instanceids,Values=${{ secrets.EC2_INSTANCE_ID }}" --parameters 'commands=docker pull ${{ secrets.DOCKER_USERNAME }}/frontend:latest && docker pull ${{ secrets.DOCKER_USERNAME }}/backend:latest && docker-compose up -d'
+
 
